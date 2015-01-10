@@ -11,8 +11,8 @@ enum {
 struct State
 {
     int c;
-    State *out;
     State *out1;
+    State *out2;
     int lastlist;
 };
 
@@ -32,9 +32,11 @@ union Ptrlist
  */
 struct Frag
 {
-	struct State *start;
-	Ptrlist *out;
+	State *start;
+	//Ptrlist *out;
+	State *dangling_out_ptrs[2];
 };
+
 
 /* Creates a new pointer list containing a single pointer outp. */
 Ptrlist *new_ptrlist(State **outp)
@@ -47,7 +49,18 @@ Ptrlist *new_ptrlist(State **outp)
     Ptrlist *nlist = (Ptrlist*) outp;
     nlist->next = NULL;
     return nlist;
-};
+}
 
-//Ptrlist *append(Ptrlist *l1, Ptrlist *l2);
-//void patch(Ptrlist *l, State *s);
+/* Concatenates two pointer lists. */
+Ptrlist *append(Ptrlist *l1, Ptrlist *l2)
+{
+    l1->next = l2;
+    return l1;
+}
+
+/* Connects the dangling pointers in pointer list l to state s. */
+void patch(Ptrlist *l, State *s)
+{
+    while (l->next)
+        l->s = s;
+}
