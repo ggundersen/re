@@ -1,36 +1,39 @@
 #include "nfa.h"
+#include <stdio.h>
 
-
-/* Use 256 and 257 for Match and Split to stay outside of ASCII's range. */
-enum {
-	Match = 256,
-	Split = 257
-};
-
-/* We represent the NFA as a linked collection of State structs. */
-struct State
-{
-    int c;
-    State *out1;
-    State *out2;
-    int lastlist;
-};
-
-/* 
- * An NFA fragment contains a start state and 0 or more pointers to out
- * states.
+/*
+ * A helpful constructor function for the State struct. See:
+ * http://stackoverflow.com/a/3774202/1830334.
  */
-struct Frag
+State *State_new(char c, State *out1, State *out2)
 {
-	State *start;
-	//Ptrlist *out;
-	State *out_ptrs[2];
-};
+	/* 
+	 * This is used to correctly allocate enough memory for the NFA. In RSC's
+	 * implementation, it is a global.
+	 */
+	//state_count++;
+
+	State *s;
+	s = malloc(sizeof *s);
+	s->lastlist = 0;
+	s->c = c;
+	s->out1 = out1;
+	s->out2 = out2;
+	return s;
+}
+
+/* See State_new for details about this pattern. */
+Frag Frag_new(State *start, State **ptrs)
+{
+	Frag n = { start, ptrs };
+	return n;
+}
 
 /* Creates a new pointer list containing a single pointer outp. */
-State **new_ptrlist(State **outp)
+State **List_new(State *out_ptr)
 {
-    State **nlist = outp;
+    /* Take the address of out_ptr and set it as the first element. */
+    State **nlist = &out_ptr;
     return nlist;
 }
 
