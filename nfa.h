@@ -13,9 +13,9 @@ typedef union Ptrlist Ptrlist;
 typedef struct Frag Frag;
 
 /* Helper functions for manipulating NFA states. */
-Ptrlist *new_ptrlist(State **outp);
-Ptrlist *append(Ptrlist *l1, Ptrlist *l2);
-void patch(Ptrlist *l, State *s);
+State **new_ptrlist(State **outp);
+//State **append(Ptrlist *l1, Ptrlist *l2);
+//void patch(Ptrlist *l, State *s);
 
 
 #endif
