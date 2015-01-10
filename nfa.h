@@ -2,23 +2,13 @@
 #define NFA_H
 
 
-/* We represent the NFA as a linked collection of State structs. */
-struct State
-{
-    int c;
-    State *out;
-    State *out1;
-    int lastlist;
-};
+/* These typedefs allows us to reference `X` rather than `Struct X`. */
 
-/* An NFA fragment, containing a start state and 0 or more pointers to out
- * states.
- */
-struct Frag
-{
-	State *start;
-	Ptrlist *out;
-}i;
+typedef struct State State;
+/* I'm not sure why RSC uses a union: http://stackoverflow.com/a/346579/1830334. */
+typedef union Ptrlist Ptrlist;
+typedef struct Frag Frag;
+
 
 
 #endif
