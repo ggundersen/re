@@ -5,7 +5,7 @@
  * A helpful constructor function for the State struct. See:
  * http://stackoverflow.com/a/3774202/1830334.
  */
-State *State_new(char c, State *out1, State *out2)
+State *State_new(int c, State *out1, State *out2)
 {
 	/* 
 	 * This is used to correctly allocate enough memory for the NFA. In RSC's
@@ -23,9 +23,9 @@ State *State_new(char c, State *out1, State *out2)
 }
 
 /* See State_new for details about this pattern. */
-Frag Frag_new(State *start, State **ptrs)
+Frag Frag_new(State *start, State **out)
 {
-	Frag n = { start, ptrs };
+	Frag n = { start, out };
 	return n;
 }
 
@@ -38,11 +38,15 @@ State **List_new(State *out_ptr)
 }
 
 /* Concatenates two pointer lists. */
-/*State **append(State **l1, State **l2)
+State **concat(State **l1, State **l2)
 {
-    l1[0] = l2;
-    return l1;
-}*/
+    /* TODO: Make the array sizer a macro. */
+    int size = (sizeof(l1) / sizeof(State)) + (sizeof(l2) / sizeof(State));
+    State l3 = State[size];
+    l3[0] = l1;
+    l3[sizeof(l1) / sizeof(State)] = l2;
+    return l3;
+}
 
 /* Connects the dangling pointers in pointer list l to state s. */
 /*void patch(Ptrlist *l, State *s)

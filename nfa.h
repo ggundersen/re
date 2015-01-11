@@ -6,7 +6,7 @@
 
 
 /* Use 256 and 257 for Match and Split to stay outside of ASCII's range. */
-enum {
+enum test {
 	Match = 256,
 	Split = 257
 };
@@ -17,13 +17,13 @@ enum {
 typedef struct State State;
 struct State
 {
-    char c;
+    int c;
     State *out1;
     State *out2;
     int lastlist;
 };
 
-State *State_new(char c, State *out1, State *out2);
+State *State_new(int c, State *out1, State *out2);
 
 /* 
  * An NFA fragment contains a start state and 0 or more pointers to out
@@ -34,17 +34,17 @@ struct Frag
 {
 	State *start;
 	//Ptrlist *out;
-	State **out_ptrs;
+	State **out;
 };
 
 /* Frag_new() does not return a pointer because Frags are stored on stack[]. */
-Frag Frag_new(State *start, State **ptrs);
+Frag Frag_new(State *start, State **out);
 
 /* Helper functions for manipulating NFA states. */
 State **List_new(State *outp);
 
 
-//State **append(Ptrlist *l1, Ptrlist *l2);
+State **concat(State **l1, State **l2);
 //void patch(Ptrlist *l, State *s);
 
 

@@ -24,7 +24,7 @@ void push(Frag s)
 State* post2nfa(char *postfix)
 {
 	char *p;
-	Frag stack[1000];//, stackp;/*, e1, e2, e;*/
+	Frag stack[1000], /* stackp, */ e1, e2/*, e*/;
 	State *s;
 
     /* 
@@ -32,22 +32,33 @@ State* post2nfa(char *postfix)
      * interprets as all of the same type. These helper functions just move the
      * array's pointer.
      */
-	#define push(s) *stackp++ = s
-	#define pop() *--stackp
+	//#define push(s) *stackp++ = s
+	//#define pop() *--stackp
 
     /*
      * In C, strings can be iterated over by incrementing a pointer to the
      * first character.
      */
     stackp = stack;
+    Frag f;
     for (p = postfix; *p; p++) {
 		switch (*p) {
 		    default:
-		        printf("%c\n", *p);
+		        //printf("%c\n", *p);
 	            s = State_new(*p, NULL, NULL);
-	            push(Frag_new(s, List_new(s->out1)));
+	            printf("%d\n", s->out1 == NULL);
+	            f = Frag_new(s, List_new(s->out1));
+	            printf("%c\n", f.start->c);
+	            push(f);
 	            break;
-		}
+            case '|':
+            	e2 = pop();
+            	e1 = pop();
+            	s = State_new(Split, e1.start, e2.start);
+            	f = Frag_new(s, concat(e1.out, e2.out));
+            	push(f);
+            	break;
+        }
 	}
 	
 	//e = pop();
@@ -58,6 +69,6 @@ State* post2nfa(char *postfix)
 
 int main(int argc, char **argv)
 {
-    post2nfa("foo");
+    post2nfa(argv[1]);
     return 0;
 }
