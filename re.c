@@ -46,12 +46,12 @@ State* post2nfa(char *postfix)
 		    default:
 		        //printf("%c\n", *p);
 	            s = State_new(*p, NULL, NULL);
-	            printf("%d\n", s->out1 == NULL);
 	            f = Frag_new(s, List_new(s->out1));
-	            printf("%c\n", f.start->c);
+	            //printf("%c\n", *p);
 	            push(f);
 	            break;
             case '|':
+            	//printf("%c\n", *p);
             	e2 = pop();
             	e1 = pop();
             	s = State_new(Split, e1.start, e2.start);

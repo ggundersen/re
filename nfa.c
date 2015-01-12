@@ -29,7 +29,7 @@ Frag Frag_new(State *start, State **out)
 	return n;
 }
 
-/* Creates a new pointer list containing a single pointer outp. */
+/* Creates a new pointer list containing a single pointer out_ptr. */
 State **List_new(State *out_ptr)
 {
     /* Take the address of out_ptr and set it as the first element. */
@@ -40,11 +40,13 @@ State **List_new(State *out_ptr)
 /* Concatenates two pointer lists. */
 State **concat(State **l1, State **l2)
 {
-    /* TODO: Make the array sizer a macro. */
-    int size = (sizeof(l1) / sizeof(State)) + (sizeof(l2) / sizeof(State));
-    State l3 = State[size];
-    l3[0] = l1;
-    l3[sizeof(l1) / sizeof(State)] = l2;
+    int st_n = sizeof(State);
+    int l1_n = sizeof(l1) / sizeof(State);
+    int l2_n = sizeof(l2) / sizeof(State);
+
+    State **l3 = malloc((l1_n + l2_n) * st_n);
+    memcpy(l3, l1, l1_n * st_n);
+    memcpy(l3 + l1_n * st_n, l2, l2_n * st_n);
     return l3;
 }
 

@@ -2,6 +2,7 @@
 #define NFA_H
 
 
+#include <string.h>
 #include <stdlib.h>
 
 
@@ -33,7 +34,6 @@ typedef struct Frag Frag;
 struct Frag
 {
 	State *start;
-	//Ptrlist *out;
 	State **out;
 };
 
