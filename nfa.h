@@ -6,11 +6,12 @@
 #include <stdlib.h>
 
 
+/* TODO! */
 /* Use 256 and 257 for Match and Split to stay outside of ASCII's range. */
-enum test {
+/*enum {
 	Match = 256,
 	Split = 257
-};
+};*/
 
 /* These typedefs allows us to reference "X" rather than "Struct X". */
 
@@ -41,8 +42,7 @@ struct Frag
 Frag Frag_new(State *start, State **out);
 
 /* Helper functions for manipulating NFA states. */
-State **List_new(State *outp);
-
+State **Unconn_ptr_list_new(State *outp);
 
 State **concat(State **l1, State **l2);
 //void patch(Ptrlist *l, State *s);

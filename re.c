@@ -46,7 +46,7 @@ State* post2nfa(char *postfix)
 		    default:
 		        //printf("%c\n", *p);
 	            s = State_new(*p, NULL, NULL);
-	            f = Frag_new(s, List_new(s->out1));
+	            f = Frag_new(s, Unconn_ptr_list_new(s->out1));
 	            //printf("%c\n", *p);
 	            push(f);
 	            break;
@@ -54,16 +54,14 @@ State* post2nfa(char *postfix)
             	//printf("%c\n", *p);
             	e2 = pop();
             	e1 = pop();
-            	s = State_new(Split, e1.start, e2.start);
+            	/* TODO: Use the Split enum. */
+            	s = State_new(257, e1.start, e2.start);
             	f = Frag_new(s, concat(e1.out, e2.out));
             	push(f);
             	break;
         }
 	}
 	
-	//e = pop();
-	//patch(e.out, matchstate);
-	//return e.start;
 	return s;
 }
 
