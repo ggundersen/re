@@ -17,7 +17,7 @@ State *State_new(int c, State *out1, State *out2)
 
 	State *s;
 	s = malloc(sizeof *s);
-	s->lastlist = 0;
+	s->list_id = 0;
 	s->c = c;
 	s->out1 = out1;
 	s->out2 = out2;

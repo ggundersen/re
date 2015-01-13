@@ -22,7 +22,7 @@ struct State
     int c;
     State *out1;
     State *out2;
-    int lastlist;
+    int list_id;
 };
 
 State *State_new(int c, State *out1, State *out2);
