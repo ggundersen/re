@@ -27,6 +27,8 @@ struct State
 
 State *State_new(int c, State *out1, State *out2);
 
+State match_state;
+
 /* 
  * An NFA fragment contains a start state and 0 or more pointers to out
  * states.
@@ -45,7 +47,8 @@ Frag Frag_new(State *start, State **out);
 State **Unconn_ptr_list_new(State *outp);
 
 State **concat(State **l1, State **l2);
-//void patch(Ptrlist *l, State *s);
+
+void patch(State **unconn_out_ptrs, State *s);
 
 
 #endif

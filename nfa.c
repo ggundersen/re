@@ -24,6 +24,9 @@ State *State_new(int c, State *out1, State *out2)
 	return s;
 }
 
+/* TODO: Use enum. */
+State match_state = { 256 };
+
 /* See State_new for details about this pattern. */
 Frag Frag_new(State *start, State **out)
 {
@@ -52,9 +55,8 @@ State **concat(State **l1, State **l2)
     return l3;
 }
 
-/* Connects the dangling pointers in pointer list l to state s. */
-/*void patch(Ptrlist *l, State *s)
+/* Connects the unconnected pointers to new out state. */
+void patch(State **unconn_out_ptrs, State *s)
 {
-    while (l->next)
-        l->s = s;
-}*/
+    //out_s->out1 = s;
+}
