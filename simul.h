@@ -2,6 +2,7 @@
 #define SIMUL_H
 
 
+#include <stdio.h>
 #include "nfa.h"
 
 

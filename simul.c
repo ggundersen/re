@@ -18,6 +18,7 @@ void add_state(List *l, State *s)
      * pointer. The "s->list_id == g_list_id" guard checks that we haven't
      * already added the State to the list being built.
      */
+    printf("%s\n", "here 1");
 	if (s == NULL || s->list_id == g_list_id)
 		return;
 	s->list_id = g_list_id;
