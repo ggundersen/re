@@ -44,7 +44,7 @@ struct Frag
 Frag Frag_new(State *start, State **out);
 
 /* Helper functions for manipulating NFA states. */
-State **Unconn_ptr_list_new(State *outp);
+State **Unconn_ptrs_new(State *outp);
 
 State **concat(State **l1, State **l2);
 

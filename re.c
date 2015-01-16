@@ -34,28 +34,30 @@ void push(Frag f)
      * increment the pointer.
      */
     *stackp = f;
+    /* TODO! This line prevents b from being printed in input "a|b". Why? */
     stackp++;
 }
 
-void/*State* */ post2nfa(char *postfix)
+State *post2nfa(char *postfix)
 {
 	char *p;
-	/*State *s;*/
+	State *s;
+    Frag f;
     
     /*
      * In C, strings can be iterated over by incrementing a pointer to the
      * first character.
      */   
-    /*Frag stack[1000], e1, e2, e*/;
-    /*stackp = stack;*/
-
-    /*Frag f;*/
+    Frag stack[1000], e1, e2, e;
+    stackp = stack;
+    
     for (p = postfix; *p != '\0'; p++) {
         /*
          * This switch statement builds the NFA with a stack. When it
          * encounters an operator, it pops the last fragment(s) off of the
          * stack and patches it (them) to create a new fragment. When it
-         * encounters a character literal, it simply pushes a new
+         * encounters a character literal, it simply pushes a new fragment onto
+         * the stack.
          */
 		switch (*p) {
 		    /* 
@@ -66,25 +68,26 @@ void/*State* */ post2nfa(char *postfix)
 		     */
             case '|':
                 printf("%c\n", *p);
-            	/*e2 = pop();
-            	e1 = pop();*/
+            	e2 = pop();
+            	e1 = pop();
             	/* TODO: Use the Split enum. */
-            	/*s = State_new(257, e1.start, e2.start);
+            	s = State_new(257, e1.start, e2.start);
             	f = Frag_new(s, concat(e1.out, e2.out));
-            	push(f);*/
+            	push(f);
             	break;
             default:
 		        printf("%c\n", *p);
-	            /*s = State_new(*p, NULL, NULL);
-	            f = Frag_new(s, Unconn_ptr_list_new(s->out1));
-	            push(f);*/
+	            s = State_new(*p, NULL, NULL);
+	            State **ptrs = Unconn_ptrs_new(s->out1);
+	            f = Frag_new(s, ptrs);
+	            push(f);
 	            break;
         }
 	}
 	
-	/*e = pop();
-	patch(e.out, &match_state);*/
-	/*return s;*/
+	e = pop();
+	patch(e.out, &match_state);
+	return s;
 }
 
 int main(int argc, char **argv)

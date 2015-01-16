@@ -35,7 +35,7 @@ Frag Frag_new(State *start, State **out)
 }
 
 /* Creates a new pointer list containing a single pointer out_ptr. */
-State **Unconn_ptr_list_new(State *out_ptr)
+State **Unconn_ptrs_new(State *out_ptr)
 {
     /* Take the address of out_ptr and set it as the first element. */
     State **nlist = &out_ptr;
