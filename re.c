@@ -23,7 +23,7 @@ Frag pop()
      * pop(), we first decrement the stack pointer to find the previous State
      * and then dereference the pointer to get the stack.
      */
-    --stackp;
+    stackp--;
     return *stackp;
 }
 
@@ -34,10 +34,13 @@ void push(Frag f)
      * increment the pointer.
      */
     *stackp = f;
-    /* TODO! This line prevents b from being printed in input "a|b". Why? */
     stackp++;
 }
 
+/* 
+ * Takes a postfix expression, e.g. "ab|" for "a" literal or "b" literal. It
+ * cannot handle an infix expression, e.g. "a|b".
+ */
 State *post2nfa(char *postfix)
 {
 	char *p;
@@ -51,7 +54,7 @@ State *post2nfa(char *postfix)
     Frag stack[1000], e1, e2, e;
     stackp = stack;
     
-    for (p = postfix; *p != '\0'; p++) {
+    for (p = postfix; *p; p++) {
         /*
          * This switch statement builds the NFA with a stack. When it
          * encounters an operator, it pops the last fragment(s) off of the
