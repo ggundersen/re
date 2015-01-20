@@ -4,6 +4,9 @@
 # Vim
 *.swp
 
+# Binaries
+re
+
 # Object files
 *.o
 *.ko

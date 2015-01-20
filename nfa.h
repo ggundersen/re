@@ -46,6 +46,21 @@ Frag Frag_new(State *start, State **out);
 /* Helper functions for manipulating NFA states. */
 State **Unconn_ptrs_new(State *outp);
 
+/*
+ * A union allocates enough memory for the maximum member. See this for
+ * details: http://stackoverflow.com/q/346536/1830334.
+ *
+ * With Ptrlist, we have two members next and s. When a Ptrlist is first
+ * initialized, it contains just a next, a pointer to a next state. Later, when
+ * we append or patch the list, we traverse the next pointer(s) until we get to
+ * the end of the list.
+ */
+union Ptrlist
+{
+	Ptrlist *next;
+	State *s;
+};
+
 State **concat(State **l1, State **l2);
 
 void patch(State **unconn_out_ptrs, State *s);

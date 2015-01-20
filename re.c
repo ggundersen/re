@@ -8,6 +8,9 @@
 #include "nfa.h"
 #include "simul.h"
 
+/* Silences the unused variable warning. */
+#define UNUSED(x) (void)(x)
+
 
 Frag *stackp;
     
@@ -39,7 +42,7 @@ void push(Frag f)
 
 /* 
  * Takes a postfix expression, e.g. "ab|" for "a" literal or "b" literal. It
- * cannot handle an infix expression, e.g. "a|b".
+ * cannot handle an infix expression, for example "a|b".
  */
 State *post2nfa(char *postfix)
 {
@@ -93,9 +96,22 @@ State *post2nfa(char *postfix)
 	return s;
 }
 
+void test()
+{
+    char *p = "cd";
+    State *s = State_new(*p, NULL, NULL);
+    State *s2 = State_new(*++p, s, NULL);
+    //printf("%c\n", s2->out1->c);
+    //printf("%c\n", s2->c);
+	State **ptrs = Unconn_ptrs_new(s->out1);
+	UNUSED(s2);
+	//printf("%c", **ptrs->c);
+}
+
 int main(int argc, char **argv)
 {
-    post2nfa(argv[1]);
+    test();
+    //post2nfa(argv[1]);
     /*char *word = argv[2];
     State *start = post2nfa(argv[1]);
     if (match(start, word))
