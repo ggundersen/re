@@ -54,7 +54,7 @@ State *post2nfa(char *postfix)
      * In C, strings can be iterated over by incrementing a pointer to the
      * first character.
      */   
-    Frag stack[1000], e1, e2, e;
+    Frag stack[1000], e1, e2/*, e*/;
     stackp = stack;
     
     for (p = postfix; *p; p++) {
@@ -84,15 +84,15 @@ State *post2nfa(char *postfix)
             default:
 		        printf("%c\n", *p);
 	            s = State_new(*p, NULL, NULL);
-	            State **ptrs = Unconn_ptrs_new(s->out1);
-	            f = Frag_new(s, ptrs);
+	            StateList *out_ptrs = StateList_new(s->out1);
+	            f = Frag_new(s, out_ptrs);
 	            push(f);
 	            break;
         }
 	}
 	
-	e = pop();
-	patch(e.out, &match_state);
+	//e = pop();
+	//patch(e.out, &match_state);
 	return s;
 }
 
@@ -103,7 +103,7 @@ void test()
     State *s2 = State_new(*++p, s, NULL);
     //printf("%c\n", s2->out1->c);
     //printf("%c\n", s2->c);
-	State **ptrs = Unconn_ptrs_new(s->out1);
+	//State **ptrs = Unconn_ptrs_new(s->out1);
 	UNUSED(s2);
 	//printf("%c", **ptrs->c);
 }

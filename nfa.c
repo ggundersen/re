@@ -27,36 +27,45 @@ State *State_new(int c, State *out1, State *out2)
 /* TODO: Use enum. */
 State match_state = { 256 };
 
+/* Creates a new pointer list containing a single pointer out_ptr. */
+StateList *StateList_new(State *out)
+{
+    /* Why do I have to cast this for the code to compile? */
+    StateList *nlist = &(StateList) { out, NULL };
+    return nlist;
+}
+
 /* See State_new for details about this pattern. */
-Frag Frag_new(State *start, State **out)
+Frag Frag_new(State *start, StateList* out)
 {
 	Frag n = { start, out };
 	return n;
 }
 
-/* Creates a new pointer list containing a single pointer out_ptr. */
-State **Unconn_ptrs_new(State *out_ptr)
-{
-    /* Take the address of out_ptr and set it as the first element. */
-    State **nlist = &out_ptr;
-    return nlist;
-}
 
 /* Concatenates two pointer lists. */
-State **concat(State **l1, State **l2)
+StateList *concat(StateList *l1, StateList *l2)
 {
-    int st_n = sizeof(State);
-    int l1_n = sizeof(l1) / sizeof(State);
-    int l2_n = sizeof(l2) / sizeof(State);
+    /* Save the original pointer before traversing the linked list. */
+    StateList *original = l1;
 
-    State **l3 = malloc((l1_n + l2_n) * st_n);
-    memcpy(l3, l1, l1_n * st_n);
-    memcpy(l3 + l1_n * st_n, l2, l2_n * st_n);
-    return l3;
+    /* Traverse the linked list. */
+    while (l1->next)
+        l1 = l1->next;
+
+    /* l1->next is NULL; it is safe to assign a new StateList to it. */
+    l1->next = l2;
+    
+    /* 
+     * This is an example of pointer power/confusion. original is a pointer to
+     * the original StateList. But it has been concatenated with l2 because we
+     * set l1->next to l2. If these were references, this would not work.
+     */
+    return original;
 }
 
 /* Connects the unconnected pointers to new out state. */
-void patch(State **unconn_out_ptrs, State *s)
+/*void patch(State **unconn_out_ptrs, State *s)
 {
     //out_s->out1 = s;
-}
+}*/
