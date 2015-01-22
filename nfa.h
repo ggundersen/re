@@ -39,6 +39,9 @@ struct StateList
     StateList *next;
 };
 
+/* Helper functions for manipulating NFA states. */
+StateList *StateList_new(State *outp);
+
 /* 
  * An NFA fragment contains a start state and 0 or more pointers to out
  * states.
@@ -52,9 +55,6 @@ struct Frag
 
 /* Frag_new() does not return a pointer because Frags are stored on stack[]. */
 Frag Frag_new(State *start, StateList *out);
-
-/* Helper functions for manipulating NFA states. */
-StateList *StateList_new(State *outp);
 
 StateList *concat(StateList *l1, StateList *l2);
 

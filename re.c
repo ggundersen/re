@@ -57,7 +57,7 @@ State *post2nfa(char *postfix)
     Frag stack[1000], e1, e2/*, e*/;
     stackp = stack;
     
-    for (p = postfix; *p; p++) {
+    for (p = postfix; *p != '\0'; p++) {
         /*
          * This switch statement builds the NFA with a stack. When it
          * encounters an operator, it pops the last fragment(s) off of the
@@ -93,28 +93,12 @@ State *post2nfa(char *postfix)
 	
 	//e = pop();
 	//patch(e.out, &match_state);
+	printf("return");
 	return s;
-}
-
-void test()
-{
-    char *p = "cd";
-    State *s = State_new(*p, NULL, NULL);
-    State *s2 = State_new(*++p, s, NULL);
-    //printf("%c\n", s2->out1->c);
-    //printf("%c\n", s2->c);
-	//State **ptrs = Unconn_ptrs_new(s->out1);
-	UNUSED(s2);
-	//printf("%c", **ptrs->c);
 }
 
 int main(int argc, char **argv)
 {
-    test();
-    //post2nfa(argv[1]);
-    /*char *word = argv[2];
-    State *start = post2nfa(argv[1]);
-    if (match(start, word))
-        printf("%s matches\n", word);*/
+    post2nfa("ab|");
     return 0;
 }

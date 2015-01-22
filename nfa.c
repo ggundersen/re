@@ -30,18 +30,26 @@ State match_state = { 256 };
 /* Creates a new pointer list containing a single pointer out_ptr. */
 StateList *StateList_new(State *out)
 {
-    /* Why do I have to cast this for the code to compile? */
-    StateList *nlist = &(StateList) { out, NULL };
-    return nlist;
+    StateList *slist;
+    slist = malloc(sizeof *slist);
+    slist->s = out;
+    slist->next = NULL;
+    return slist;
 }
 
 /* See State_new for details about this pattern. */
 Frag Frag_new(State *start, StateList* out)
 {
+    /* 
+     * We can instantiate a struct using C's designated initialier. See
+     * http://stackoverflow.com/a/330867/1830334 for more details. Why doesn't
+     * this work for *State_new and *StateList_new? Because we want to get a
+     * pointer back from those functions. malloc() allocates memory and returns
+     * and address for that memory.
+     */
 	Frag n = { start, out };
 	return n;
 }
-
 
 /* Concatenates two pointer lists. */
 StateList *concat(StateList *l1, StateList *l2)
@@ -49,9 +57,14 @@ StateList *concat(StateList *l1, StateList *l2)
     /* Save the original pointer before traversing the linked list. */
     StateList *original = l1;
 
-    /* Traverse the linked list. */
-    while (l1->next)
+    /* 
+     * Traverse the linked list.
+     * NULL evaluates to false. This is guaranteed by ANSI C. See:
+     * http://stackoverflow.com/a/459757/1830334
+     */
+    while (l1->next) {
         l1 = l1->next;
+    }
 
     /* l1->next is NULL; it is safe to assign a new StateList to it. */
     l1->next = l2;
