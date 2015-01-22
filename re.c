@@ -46,6 +46,20 @@ void push(Frag f)
  */
 State *post2nfa(char *postfix)
 {
+    /* 
+     * A pointer is a variable whose value is the address of another variable;
+     * importantly, the compiler knows how to interpret the data at that
+     * address because of the pointer's type.
+     *
+     * Reusing a pointer in a loop, which is what we are about to do here, is
+     * fine; For example, *s can be reused over and over; the value pointed to
+     * by s is a State struct, but that struct is reassigned to *newly
+     * allocated memory* in the State_new() constructor.
+     *
+     * Appreciate when memory is being reused, when it is placed on the read-
+     * only, i.e. on the stack; read- and writeable, i.e. on the heap. Read
+     * this for details: http://stackoverflow.com/a/80113/1830334.
+     */
 	char *p;
 	State *s;
     Frag f;
@@ -73,7 +87,7 @@ State *post2nfa(char *postfix)
 		     * metacharacter.
 		     */
             case '|':
-                printf("%c\n", *p);
+                //printf("%c\n", *p);
             	e2 = pop();
             	e1 = pop();
             	/* TODO: Use the Split enum. */
@@ -82,7 +96,7 @@ State *post2nfa(char *postfix)
             	push(f);
             	break;
             default:
-		        printf("%c\n", *p);
+		        //printf("%c\n", *p);
 	            s = State_new(*p, NULL, NULL);
 	            StateList *out_ptrs = StateList_new(s->out1);
 	            f = Frag_new(s, out_ptrs);
@@ -93,12 +107,14 @@ State *post2nfa(char *postfix)
 	
 	//e = pop();
 	//patch(e.out, &match_state);
-	printf("return");
 	return s;
 }
 
 int main(int argc, char **argv)
 {
-    post2nfa("ab|");
+    State *start = post2nfa("ab|");
+    printf("%c\n", start->c);
+    printf("%c\n", start->out1->c);
+    printf("%c\n", start->out2->c);
     return 0;
 }
