@@ -68,7 +68,7 @@ State *post2nfa(char *postfix)
      * In C, strings can be iterated over by incrementing a pointer to the
      * first character.
      */   
-    Frag stack[1000], e1, e2/*, e*/;
+    Frag stack[1000], e1, e2, e;
     stackp = stack;
     
     for (p = postfix; *p != '\0'; p++) {
@@ -105,7 +105,7 @@ State *post2nfa(char *postfix)
         }
 	}
 	
-	//e = pop();
+	e = pop();
 	//patch(e.out, &match_state);
 	return s;
 }

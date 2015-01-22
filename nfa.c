@@ -78,7 +78,15 @@ StateList *concat(StateList *l1, StateList *l2)
 }
 
 /* Connects the unconnected pointers to new out state. */
-/*void patch(State **unconn_out_ptrs, State *s)
+void patch(StateList *slist, State *s)
 {
-    //out_s->out1 = s;
-}*/
+    /* This variable... */
+    /*StateList *next;
+
+    slist->s = s;
+    while (slist != NULL) {
+        next = slist->next;
+        slist->s = s;
+        slist = next;
+    }*/
+}

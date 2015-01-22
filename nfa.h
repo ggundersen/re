@@ -58,7 +58,7 @@ Frag Frag_new(State *start, StateList *out);
 
 StateList *concat(StateList *l1, StateList *l2);
 
-//void patch(State **unconn_out_ptrs, State *s);
+void patch(StateList *slist, State *s);
 
 
 #endif
