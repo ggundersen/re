@@ -25,7 +25,7 @@ State *State_new(int c, State *out1, State *out2)
 }
 
 /* TODO: Use enum. */
-State match_state = { 256 };
+State match_state = { '-' };
 
 /* Creates a new pointer list containing a single pointer out_ptr. */
 StateList *StateList_new(State *out)
@@ -37,8 +37,11 @@ StateList *StateList_new(State *out)
     return slist;
 }
 
-/* See State_new for details about this pattern. */
-Frag Frag_new(State *start, StateList* out)
+/* 
+ * We don't create a pointer to a Frag, like we do with State and StateList,
+ * because objects are all referentiable from within post2nfa().
+ */
+Frag Frag_new(State *start, StateList* outList)
 {
     /* 
      * We can instantiate a struct using C's designated initialier. See
@@ -47,7 +50,7 @@ Frag Frag_new(State *start, StateList* out)
      * pointer back from those functions. malloc() allocates memory and returns
      * and address for that memory.
      */
-	Frag n = { start, out };
+	Frag n = { start, outList };
 	return n;
 }
 
@@ -72,7 +75,7 @@ StateList *concat(StateList *l1, StateList *l2)
     /* 
      * This is an example of pointer power/confusion. original is a pointer to
      * the original StateList. But it has been concatenated with l2 because we
-     * set l1->next to l2. If these were references, this would not work.
+     * set l1->next to l2.
      */
     return original;
 }
@@ -80,13 +83,21 @@ StateList *concat(StateList *l1, StateList *l2)
 /* Connects the unconnected pointers to new out state. */
 void patch(StateList *slist, State *s)
 {
-    /* This variable... */
-    /*StateList *next;
+    /* 
+     * next is a good example of something I wouldn't think to do in another
+     * language; or perhaps I simply don't know what is happening in another
+     * language: we are reusing the pointer to a StateList to traverse the 
+     * linked list. On every iteration of the while loop, we reuse that block
+     * of memory--which the computer can correctly interpret because it is
+     * always a StateList.
+     */
+    StateList *next;
 
     slist->s = s;
-    while (slist != NULL) {
+    while (slist) {
         next = slist->next;
         slist->s = s;
+        /* Traverse the linked list; next is incremented every loop. */
         slist = next;
-    }*/
+    }
 }

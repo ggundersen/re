@@ -87,16 +87,14 @@ State *post2nfa(char *postfix)
 		     * metacharacter.
 		     */
             case '|':
-                //printf("%c\n", *p);
             	e2 = pop();
             	e1 = pop();
             	/* TODO: Use the Split enum. */
-            	s = State_new(257, e1.start, e2.start);
-            	f = Frag_new(s, concat(e1.out, e2.out));
+            	s = State_new('~', e1.start, e2.start);
+            	f = Frag_new(s, concat(e1.outList, e2.outList));
             	push(f);
             	break;
             default:
-		        //printf("%c\n", *p);
 	            s = State_new(*p, NULL, NULL);
 	            StateList *out_ptrs = StateList_new(s->out1);
 	            f = Frag_new(s, out_ptrs);
@@ -106,15 +104,21 @@ State *post2nfa(char *postfix)
 	}
 	
 	e = pop();
-	//patch(e.out, &match_state);
+	printf("%c\n", e.start->c);
+	printf("%c\n", e.start->out1->c);
+	printf("%c\n", e.start->out2->c);
+	patch(e.outList, &match_state);
+	printf("%c\n", e.outList->s->c);
 	return s;
 }
 
 int main(int argc, char **argv)
 {
     State *start = post2nfa("ab|");
-    printf("%c\n", start->c);
-    printf("%c\n", start->out1->c);
-    printf("%c\n", start->out2->c);
+    UNUSED(start);
+    //printf("%c\n", start->c);
+    //printf("%c\n", start->out1->c);
+    //printf("%c\n", start->out2->c);
+    // Should be the match character
     return 0;
 }

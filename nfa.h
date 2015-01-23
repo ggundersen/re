@@ -50,7 +50,7 @@ typedef struct Frag Frag;
 struct Frag
 {
 	State *start;
-	StateList *out;
+	StateList *outList;
 };
 
 /* Frag_new() does not return a pointer because Frags are stored on stack[]. */
