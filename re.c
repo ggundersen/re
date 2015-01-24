@@ -61,21 +61,22 @@ State *post2nfa(char *postfix)
      * by s is a State struct, but that struct is reassigned to *newly
      * allocated memory* in the State_new() constructor.
      *
-     * Appreciate when memory is being reused, when it is placed on the read-
-     * only, i.e. on the stack; read- and writeable, i.e. on the heap. Read
-     * this for details: http://stackoverflow.com/a/80113/1830334.
+     * Appreciate when memory is being reused; when it is in read-only memory,
+     * i.e. on the stack; and when it is read- and writeable, i.e. on the heap.
+     * Read this for details: http://stackoverflow.com/a/80113/1830334.
      */
 	char *p;
 	State *s;
     Frag f;
-    
+    OutPtrs *out_ptrs;
+
     /*
      * In C, strings can be iterated over by incrementing a pointer to the
      * first character.
      */   
     Frag stack[1000], e1, e2, e;
     stackp = stack;
-    
+
     for (p = postfix; *p != '\0'; p++) {
         /*
          * This switch statement builds the NFA with a stack. When it
@@ -85,51 +86,73 @@ State *post2nfa(char *postfix)
          * the stack.
          */
 		switch (*p) {
-		    /* 
+            /* 
 		     * char literal. We don't know what to do with this fragment until
 		     * we see the upcoming metacharacter. Because this is a postfixed
 		     * string, we never go more than a single char without seeing a
 		     * metacharacter.
 		     */
+            default:
+                printf("%c -------------------------------------\n", *p);
+	            s = State_new(*p, NULL, NULL);
+	            /* 
+	             * Pass the *address* to out1. If we passed the *value*, we
+	             * would be passing the NULL pointer.
+	             */
+	            out_ptrs = OutPtrs_new(&s->out1);
+	            f = Frag_new(s, out_ptrs);
+	            push(f);
+	            break;
             case '|':
             	e2 = pop();
             	e1 = pop();
             	/* TODO: Use the Split enum. */
             	s = State_new('~', e1.start, e2.start);
-            	f = Frag_new(s, concat(e1.outList, e2.outList));
+            	out_ptrs = concat(e1.outPtrs, e2.outPtrs);
+            	f = Frag_new(s, out_ptrs);
             	push(f);
             	break;
-            default:
-	            s = State_new(*p, NULL, NULL);
-	            StateList *out_ptrs = StateList_new(s->out1);
-	            f = Frag_new(s, out_ptrs);
-	            push(f);
-	            break;
         }
         num_states++;
 	}
 	
 	e = pop();
-	patch(e.outList, &match_state);
-	return s;
+	patch(e.outPtrs, &match_state);
+	return e.start;
 }
+
+/*struct S {
+    int *n;
+};*/
 
 int main(int argc, char **argv)
 {
-    char *input = "ab|";
+    /*int n = 3;
+    struct S *t;
+    t = malloc(sizeof *t);
+    t->n = &n;
+    printf("address of n %p\n", &n);
+    printf("address of t %p\n", &t);
+    printf("address of ? %p\n", &t->n);
+    &t->n = 
+    printf("value %d\n", *t->n); 
+    UNUSED(t);*/
     num_states = 0;
-    State *start = post2nfa(input);
+    State *start = post2nfa("ab|");
+    printf("%c\n", start->out1->out1->c);
+    UNUSED(start);
 
     /* 
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-    List curr_states;
+    /*List curr_states;
     curr_states.s = malloc(num_states * sizeof(State) * 1000);
     List next_states;
     next_states.s = malloc(num_states * sizeof(State) * 1000);
-    if (match(start, input, &curr_states, &next_states)) {
-        printf("%s matches\n", input); 
-    }
+    if (match(start, "a", &curr_states, &next_states)) {
+        printf("%s matches\n", "a"); 
+    } else
+        printf("Fail\n");*/
     return 0;
 }

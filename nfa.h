@@ -30,17 +30,17 @@ State *State_new(int c, State *out1, State *out2);
 State match_state;
 
 /*
- * A linked list of state structs.
+ * A linked list of State struct pointers.
  */
-typedef struct StateList StateList;
-struct StateList
+typedef struct OutPtrs OutPtrs;
+struct OutPtrs
 {
     State *s;
-    StateList *next;
+    OutPtrs *next;
 };
 
 /* Helper functions for manipulating NFA states. */
-StateList *StateList_new(State *outp);
+OutPtrs *OutPtrs_new(State **outp);
 
 /* 
  * An NFA fragment contains a start state and 0 or more pointers to out
@@ -50,15 +50,15 @@ typedef struct Frag Frag;
 struct Frag
 {
 	State *start;
-	StateList *outList;
+	OutPtrs *outPtrs;
 };
 
 /* Frag_new() does not return a pointer because Frags are stored on stack[]. */
-Frag Frag_new(State *start, StateList *out);
+Frag Frag_new(State *start, OutPtrs *out);
 
-StateList *concat(StateList *l1, StateList *l2);
+OutPtrs *concat(OutPtrs *l1, OutPtrs *l2);
 
-void patch(StateList *slist, State *s);
+void patch(OutPtrs *slist, State *s);
 
 
 #endif
