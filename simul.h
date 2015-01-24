@@ -15,10 +15,7 @@ struct List
      * created for the NFA multipled by the size of the State struct.
      */
 	State **s;
-	/* 
-	 * Tracks which NFA simulation run this list represents. I'm not sure we
-	 * need this if we remove the capability of inputting multiple strings.
-	 */
+	/* Tracks the number of states on the List struct. */
 	int n;
 };
 
