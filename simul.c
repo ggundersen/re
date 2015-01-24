@@ -3,13 +3,10 @@
 
 /* 
  * This global keeps track of which NFA simulation we are on. Notice it is only
- * incremented when List_new() is called, which is only called when match() is
+ * incremented when init_list() is called, which is only called when match() is
  * called. We then give every state in a simulation a list_id of listid.
  */
 int g_list_id = 0;
-
-/* These are preallocated lists we use to run the simulation. */
-List l1, l2;
 
 void add_state(List *l, State *s)
 {
@@ -18,25 +15,25 @@ void add_state(List *l, State *s)
      * pointer. The "s->list_id == g_list_id" guard checks that we haven't
      * already added the State to the list being built.
      */
-    printf("%s\n", "here 1");
 	if (s == NULL || s->list_id == g_list_id)
 		return;
 	s->list_id = g_list_id;
 	/* TODO: Figure out enum! */
 	if (s->c == 257) {
 		/* Follow unlabeled arrows. */
+		printf("%c\n", s->out1->c);
 		add_state(l, s->out1);
 		add_state(l, s->out2);
 		return;
 	}
-	l->s[l->n++] = s;
+	(l->s)[l->n++] = s;
 }
 
 /* 
- * Creates a new List struct, incrementing the global g_list_id, so we can
- * check if states have already been added.
+ * Notice this does *not* create a new List struct. The memory has already been
+ * allocated. This adds a start State and any subsequent States to the List l.
  */
-List* List_new(State *s, List *l)
+List* init_list(State *s, List *l)
 {
 	g_list_id++;
 	/* n tracks the number of State structs on the list. */
@@ -68,16 +65,16 @@ void step(List *clist, int c, List *nlist)
 	}
 }
 
-int match(State *start, char *s)
+int match(State *start, char *s, List *curr_list, List *next_list)
 {
-	List *clist, *nlist, *t;
+	List *clist, *nlist;//, *t;
 
-	/* &l1 returns the address of the pointer. */
-	clist = List_new(start, &l1);
-	nlist = &l2;
+	clist = init_list(start, curr_list);
+	nlist = next_list;
 	for (; *s; s++) {
-		step(clist, *s, nlist);
-		t = clist; clist = nlist; nlist = t;	/* swap clist, nlist */
+	    printf("%c\n", *s);
+		//step(clist, *s, nlist);
+		//t = clist; clist = nlist; nlist = t;	/* swap clist, nlist */
 	}
 	return is_match(clist);
 }

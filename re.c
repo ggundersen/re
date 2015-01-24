@@ -12,6 +12,11 @@
 #define UNUSED(x) (void)(x)
 
 
+/* 
+ * Tracks the number of States in the NFA so that we can allocate enough memory
+ * to simulate the NFA.
+ */
+int num_states;
 Frag *stackp;
     
 /* 
@@ -101,24 +106,30 @@ State *post2nfa(char *postfix)
 	            push(f);
 	            break;
         }
+        num_states++;
 	}
 	
 	e = pop();
-	printf("%c\n", e.start->c);
-	printf("%c\n", e.start->out1->c);
-	printf("%c\n", e.start->out2->c);
 	patch(e.outList, &match_state);
-	printf("%c\n", e.outList->s->c);
 	return s;
 }
 
 int main(int argc, char **argv)
 {
-    State *start = post2nfa("ab|");
-    UNUSED(start);
-    //printf("%c\n", start->c);
-    //printf("%c\n", start->out1->c);
-    //printf("%c\n", start->out2->c);
-    // Should be the match character
+    char *input = "ab|";
+    num_states = 0;
+    State *start = post2nfa(input);
+
+    /* 
+     * Allocate enough memory for two lists to keep track of the current states
+     * of the simulated NFA.
+     */
+    List curr_states;
+    curr_states.s = malloc(num_states * sizeof(State) * 1000);
+    List next_states;
+    next_states.s = malloc(num_states * sizeof(State) * 1000);
+    if (match(start, input, &curr_states, &next_states)) {
+        printf("%s matches\n", input); 
+    }
     return 0;
 }

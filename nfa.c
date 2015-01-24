@@ -9,12 +9,6 @@
  */
 State *State_new(int c, State *out1, State *out2)
 {
-	/* 
-	 * This is used to correctly allocate enough memory for the NFA. In RSC's
-	 * implementation, it is a global.
-	 */
-	//state_count++;
-
 	State *s;
 	s = malloc(sizeof *s);
 	s->list_id = 0;
