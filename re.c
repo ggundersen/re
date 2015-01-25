@@ -127,7 +127,7 @@ State *post2nfa(char *postfix)
 
 int main(int argc, char **argv)
 {
-    /*int n = 3;
+    int n = 3;
     struct S *t;
     t = malloc(sizeof *t);
     t->n = &n;
@@ -136,11 +136,11 @@ int main(int argc, char **argv)
     printf("address of ? %p\n", &t->n);
     &t->n = 
     printf("value %d\n", *t->n); 
-    UNUSED(t);*/
-    num_states = 0;
-    State *start = post2nfa("ab|");
-    printf("%c\n", start->out1->out1->c);
-    UNUSED(start);
+    UNUSED(t);
+    //num_states = 0;
+    //State *start = post2nfa("ab|");
+    //printf("%c\n", start->out1->out1->c);
+    //UNUSED(start);
 
     /* 
      * Allocate enough memory for two lists to keep track of the current states

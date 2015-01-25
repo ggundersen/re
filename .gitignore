@@ -4,6 +4,9 @@
 # Vim
 *.swp
 
+# Debugging files
+re.dSYM/
+
 # Binaries
 re
 
