@@ -14,7 +14,6 @@ State *State_new(int c, State *out1, State *out2)
 	s->list_id = 0;
 	s->c = c;
 	s->out1 = out1;
-	printf("Initializing in STATE:  %p\n", &s->out1);
 	s->out2 = out2;
 	return s;
 }
@@ -22,13 +21,20 @@ State *State_new(int c, State *out1, State *out2)
 /* TODO: Use enum. */
 State match_state = { '-' };
 
-/* Creates a new pointer list containing a single pointer out_ptr. */
-OutPtrs *OutPtrs_new(State **out)
+/* Creates a new pointer list containing a single pointer outp. */
+OutPtrs *OutPtrs_new(State **outp)
 {
     OutPtrs *slist = malloc(sizeof *slist);
-    /* Cast an pointer to a pointer of a State struct to a pointer of a State struct. This seems DANGEROUS. */
-    slist->s = (State*)out;
-    printf("Initializing in OUTPRS: %p\n", out);
+    /* 
+     * outp is a pointer to a pointer of a State struct. Thus, these two
+     * notations refer to the same pointer:
+     *     outp
+     *     (State*) outp
+     *
+     * We choose the latter notation because we cannot assign outp to slist->s
+     * directly because the compiler does not know they are of the same type.
+     */
+    slist->s = (State*) outp;
     slist->next = NULL;
     return slist;
 }
@@ -89,7 +95,6 @@ void patch(OutPtrs *slist, State *s)
 	 */
 	for (; slist; slist = next) {
 		next = slist->next;
-		printf("Patching %p with %p & value %c\n", &slist->s, &s, s->c); 
 		slist->s = s;
 	}
 }

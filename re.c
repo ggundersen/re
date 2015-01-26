@@ -93,11 +93,10 @@ State *post2nfa(char *postfix)
 		     * metacharacter.
 		     */
             default:
-                printf("%c -------------------------------------\n", *p);
 	            s = State_new(*p, NULL, NULL);
 	            /* 
 	             * Pass the *address* to out1. If we passed the *value*, we
-	             * would be passing the NULL pointer.
+	             * would be passing NULL.
 	             */
 	            out_ptrs = OutPtrs_new(&s->out1);
 	            f = Frag_new(s, out_ptrs);
@@ -121,25 +120,10 @@ State *post2nfa(char *postfix)
 	return e.start;
 }
 
-/*struct S {
-    int *n;
-};*/
-
 int main(int argc, char **argv)
 {
-    int n = 3;
-    struct S *t;
-    t = malloc(sizeof *t);
-    t->n = &n;
-    printf("address of n %p\n", &n);
-    printf("address of t %p\n", &t);
-    printf("address of ? %p\n", &t->n);
-    &t->n = 
-    printf("value %d\n", *t->n); 
-    UNUSED(t);
-    //num_states = 0;
-    //State *start = post2nfa("ab|");
-    //printf("%c\n", start->out1->out1->c);
+    num_states = 0;
+    State *start = post2nfa("ab|");
     //UNUSED(start);
 
     /* 
