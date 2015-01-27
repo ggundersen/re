@@ -124,19 +124,15 @@ int main(int argc, char **argv)
 {
     num_states = 0;
     State *start = post2nfa("ab|");
-    //UNUSED(start);
+    UNUSED(start);
 
     /* 
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-    /*List curr_states;
-    curr_states.s = malloc(num_states * sizeof(State) * 1000);
-    List next_states;
-    next_states.s = malloc(num_states * sizeof(State) * 1000);
-    if (match(start, "a", &curr_states, &next_states)) {
+    if (match(start, "a")) {
         printf("%s matches\n", "a"); 
     } else
-        printf("Fail\n");*/
+        printf("Fail\n");
     return 0;
 }

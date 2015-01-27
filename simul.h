@@ -7,8 +7,8 @@
 #include "nfa.h"
 
 
-typedef struct List List;
-struct List
+typedef struct StateList StateList;
+struct StateList
 {
     /* 
      * We don't have to use a linked list of States because we know exactly how
@@ -16,11 +16,11 @@ struct List
      * created for the NFA multipled by the size of the State struct.
      */
 	State **s;
-	/* Tracks the number of states on the List struct. */
+	/* Tracks the number of states on the StateList struct. */
 	int n;
 };
 
-int match(State *start, char *s, List *curr_list, List *next_list);
+int match(State *start, char *s);
 
 
 #endif
