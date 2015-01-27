@@ -11,32 +11,43 @@ void add_state(StateList *l, State *s)
      * pointer. The "s->list_id == g_list_id" guard checks that we haven't
      * already added the State to the list being built.
      */
-	if (s == NULL || s->list_id == g_list_id)
-		return;
+	if (s == NULL) {
+	    printf("NULL\n");
+	    return;
+	}
+	if (s->list_id == g_list_id) {
+	    printf("%d", s->list_id);
+	    return;
+	}
+
+    printf("adding %c\n", s->c);
+
 	s->list_id = g_list_id;
 	/* TODO: ~ is my hack to denote split. Change this to a real enum. */
 	if (s->c == '~') {
+	    printf("adding in split %c\n", s->out1->c);
 		add_state(l, s->out1);
+		printf("adding in split %c\n", s->out2->c);
 		add_state(l, s->out2);
 		return;
 	}
-	l->s[l->n++] = s;
+	l->states[l->length++] = s;
 }
 
-void step(StateList *clist, int c, StateList *nlist)
+void step(int c, StateList *clist, StateList *nlist)
 {
 	int i;
 	State *s;
 	g_list_id++;
 
-	/* 
-	 * Every step, we reuse clist and nlist to capture the current NFA states.
-	 * Reset n every step 
-	 */
-	nlist->n = 0;
-	for (i = 0; i < clist->n; i++) {
-		s = clist->s[i];
+	/* Reset the length because we're going to use this list. */
+	nlist->length = 0;
+
+	for (i = 0; i < clist->length; i++) {
+		s = clist->states[i];
+		//printf("%c\n", s->c);
 		if (s->c == c) {
+		    printf("%c\n", s->c);
 			add_state(nlist, s->out1);
 		}
 	}
@@ -50,8 +61,7 @@ void step(StateList *clist, int c, StateList *nlist)
 StateList* init_list(State *s, StateList *l)
 {
 	g_list_id++;
-	/* n tracks the number of State structs on the list. */
-	l->n = 0;
+	l->length = 0;
 	add_state(l, s);
 	return l;
 }
@@ -63,36 +73,44 @@ StateList *StateList_new()
     int int_size = sizeof(int);
 
     StateList *l = malloc(int_size + states_size);
-    l->s = malloc(states_size);
-    l->n = 0;
+    l->states = malloc(states_size);
+    l->length = 0;
     return l;
 }
 
 int is_match(StateList *l)
 {
 	int i;
-	for (i = 0; i < l->n; i++)
+	printf("%d\n", l->length);
+	for (i = 0; i < l->length; i++) {
+	    printf("looking for match %c\n", l->states[i]->c);
 	    /* TODO: Use the enum with Match == 256. */
-	    if (l->s[i]->c == '-')
+	    if (l->states[i]->c == '-')
 	        return 1;
+	}
 	return 0;
 }
 
 int match(State *start, char *s)
 {
+	StateList *clist, *nlist, *temp;
     /* 
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-	StateList *clist, *nlist, *temp;
 	clist = init_list(start, StateList_new());
+	printf("done building frag list\n");
 	nlist = StateList_new();
+
 	for (; *s; s++) {
-		step(clist, *s, nlist);
+	    printf("next character in input word is %c\n", *s);
+		step(*s, clist, nlist);
 		/* Swap. */
+		printf("swapping\n");
 		temp = clist;
 		clist = nlist;
 		nlist = temp;
 	}
-	return is_match(clist);
+	printf("looking for a match\n");
+	return is_match(nlist);
 }

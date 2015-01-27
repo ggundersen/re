@@ -15,9 +15,9 @@ struct StateList
      * big the list should be at construction. It is the number of NFA states
      * created for the NFA multipled by the size of the State struct.
      */
-	State **s;
+	State **states;
 	/* Tracks the number of states on the StateList struct. */
-	int n;
+	int length;
 };
 
 int match(State *start, char *s);

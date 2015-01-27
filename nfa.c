@@ -7,7 +7,7 @@
  * A helpful constructor function for the State struct. See:
  * http://stackoverflow.com/a/3774202/1830334.
  */
-State *State_new(int c, State *out1, State *out2)
+State *State_new(char c, State *out1, State *out2)
 {
 	State *s;
 	s = malloc(sizeof *s);
@@ -31,8 +31,9 @@ OutPtrs *OutPtrs_new(State **outp)
      *     outp
      *     (State*) outp
      *
-     * We choose the latter notation because we cannot assign outp to slist->s
-     * directly because the compiler does not know they are of the same type.
+     * We choose the latter notation because we cannot assign outp to
+     * slist->states directly because the compiler does not know they are of
+     * the same type.
      */
     slist->s = (State*) outp;
     slist->next = NULL;

@@ -19,13 +19,13 @@
 typedef struct State State;
 struct State
 {
-    int c;
+    char c;
     State *out1;
     State *out2;
     int list_id;
 };
 
-State *State_new(int c, State *out1, State *out2);
+State *State_new(char c, State *out1, State *out2);
 
 State match_state;
 
