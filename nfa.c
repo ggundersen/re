@@ -32,8 +32,8 @@ OutPtrs *OutPtrs_new(State **outp)
      *     (State*) outp
      *
      * We choose the latter notation because we cannot assign outp to
-     * slist->states directly because the compiler does not know they are of
-     * the same type.
+     * slist->s directly because the compiler does not know they are of the
+     * same type.
      */
     slist->s = (State*) outp;
     slist->next = NULL;
@@ -48,10 +48,11 @@ Frag Frag_new(State *start, OutPtrs* outPtrs)
 {
     /* 
      * We can instantiate a struct using C's designated initializer. See
-     * http://stackoverflow.com/a/330867/1830334 for more details. Why doesn't
-     * this work for *State_new and *OutPtrs_new? Because we want to get a
-     * pointer back from those functions. malloc() allocates memory and returns
-     * and address for that memory.
+     * http://stackoverflow.com/a/330867/1830334 for more details.
+     *
+     * Why doesn't this work for *State_new and *OutPtrs_new? Because we want
+     * to get a pointer back from those functions. malloc() allocates memory
+     * and returns and address for that memory.
      */
 	Frag n = { start, outPtrs };
 	return n;
@@ -60,42 +61,34 @@ Frag Frag_new(State *start, OutPtrs* outPtrs)
 /* Concatenates two pointer lists. */
 OutPtrs *concat(OutPtrs *l1, OutPtrs *l2)
 {
-    /* Save the original pointer before traversing the linked list. */
-    OutPtrs *original = l1;
-
-    /* 
-     * Traverse the linked list.
-     * NULL evaluates to false. This is guaranteed by ANSI C. See:
-     * http://stackoverflow.com/a/459757/1830334
-     */
+    /* Save the start pointer and then traverse to the end of the linked list. */
+    OutPtrs *start = l1;
     while (l1->next)
         l1 = l1->next;
-
     /* l1->next is NULL; it is safe to assign a new OutPtrs to it. */
     l1->next = l2;
     
     /* 
-     * This is an example of pointer power/confusion. original is a pointer to
-     * the original OutPtrs. But it has been concatenated with l2 because we
+     * This is an example of pointer power/confusion. start is a pointer to
+     * the start of OutPtrs. But it has been concatenated with l2 because we
      * set l1->next to l2.
      */
-    return original;
+    return start;
 }
 
 /* 
  * Connects the unconnected pointers in the linked list of States structs to
  * new out state.
  */
-void patch(OutPtrs *slist, State *s)
+void patch(OutPtrs *slist, State *end)
 {
     OutPtrs *next;
+    printf("patch:\n");
 
-	/* 
-	 * This syntax means there is no initialization; just execute the code
-	 * until the condition, that slist is not NULL, is false.
-	 */
 	for (; slist; slist = next) {
+	    printf("%c\n", end->c);
 		next = slist->next;
-		slist->s = s;
+		printf("%p\n", &(slist->s));
+		slist->s = end;
 	}
 }
