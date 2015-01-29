@@ -4,13 +4,13 @@
 
 
 /*
- * A helpful constructor function for the State struct. See:
+ * Constructor-style function for States a la
  * http://stackoverflow.com/a/3774202/1830334.
  */
 State *State_new(char c, State *out1, State *out2)
 {
 	State *s;
-	s = malloc(sizeof *s);
+	s = malloc(sizeof(*s));
 	s->list_id = 0;
 	s->c = c;
 	s->out1 = out1;
@@ -19,23 +19,14 @@ State *State_new(char c, State *out1, State *out2)
 }
 
 /* TODO: Use enum. */
-State match_state = { '-' };
+State match_state = { '!' };
 
 /* Creates a new pointer list containing a single pointer outp. */
-OutPtrs *OutPtrs_new(State **outp)
+OutPtrs *OutPtrs_new(State *outp)
 {
     OutPtrs *slist = malloc(sizeof *slist);
-    /* 
-     * outp is a pointer to a pointer of a State struct. Thus, these two
-     * notations refer to the same pointer:
-     *     outp
-     *     (State*) outp
-     *
-     * We choose the latter notation because we cannot assign outp to
-     * slist->s directly because the compiler does not know they are of the
-     * same type.
-     */
-    slist->s = (State*) outp;
+    /* dereference outp once to get a pointer to a State. */
+    slist->s = outp;
     slist->next = NULL;
     return slist;
 }
@@ -47,12 +38,11 @@ OutPtrs *OutPtrs_new(State **outp)
 Frag Frag_new(State *start, OutPtrs* outPtrs)
 {
     /* 
-     * We can instantiate a struct using C's designated initializer. See
-     * http://stackoverflow.com/a/330867/1830334 for more details.
-     *
      * Why doesn't this work for *State_new and *OutPtrs_new? Because we want
      * to get a pointer back from those functions. malloc() allocates memory
      * and returns and address for that memory.
+     *
+     * Why is it okay that this returns a copy of the newly instantiated Frag?
      */
 	Frag n = { start, outPtrs };
 	return n;
@@ -83,12 +73,9 @@ OutPtrs *concat(OutPtrs *l1, OutPtrs *l2)
 void patch(OutPtrs *slist, State *end)
 {
     OutPtrs *next;
-    printf("patch:\n");
 
 	for (; slist; slist = next) {
-	    printf("%c\n", end->c);
 		next = slist->next;
-		printf("%p\n", &(slist->s));
 		slist->s = end;
 	}
 }

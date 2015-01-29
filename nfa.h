@@ -29,9 +29,7 @@ State *State_new(char c, State *out1, State *out2);
 
 State match_state;
 
-/*
- * A linked list of State struct pointers.
- */
+/* A linked list of State struct pointers. */
 typedef struct OutPtrs OutPtrs;
 struct OutPtrs
 {
@@ -40,7 +38,7 @@ struct OutPtrs
 };
 
 /* Helper functions for manipulating NFA states. */
-OutPtrs *OutPtrs_new(State **outp);
+OutPtrs *OutPtrs_new(State *outp);
 
 /* 
  * An NFA fragment contains a start state and 0 or more pointers to out

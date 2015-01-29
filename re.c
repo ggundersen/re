@@ -15,6 +15,12 @@
 #define UNUSED(x) (void)(x)
 
 
+// Verification
+// 1. stack[] and stackp point to the correct Frags at the correct times.
+// 2. State_new() constructor looks good.
+
+
+
 /* 
  * C arrays are really a contiguous block of memory that the machine interprets
  * as all of the same type. pop() and push() handle moving the stack pointer so
@@ -46,29 +52,26 @@ State *post2nfa(char *postfix)
     Frag f;
     OutPtrs *out_ptrs;
     Frag stack[1000], e1, e2, e;
-    
+
     stackp = stack;
     for (p = postfix; *p != '\0'; p++) {
         /*
-         * This switch statement builds the NFA with a stack. When it
-         * encounters an operator, it pops the last fragment(s) off of the
-         * stack and creates a new fragment. When it encounters a character
-         * literal, it simply pushes a new fragment onto the stack.
+         * This switch statement builds the NFA with a stack. Because the input
+         * expression is in postfix notation, we never go more than a single
+         * char without seeing a metacharacter.
          */
 		switch (*p) {
-            /* 
-		     * Because the expression is in postfix notation, we never go more
-		     * than a single char without seeing a metacharacter.
-		     */
             default:
-	            /* 
-	             * Pass the *address* to out1. If we passed the *value*, we
-	             * would be passing NULL.
-	             */
             	s = State_new(*p, NULL, NULL);
-	            out_ptrs = OutPtrs_new(&s->out1);
+	            /* 
+	             * Pass the address instead of the value so we can change the
+	             * value later.
+	             */
+	            out_ptrs = OutPtrs_new(s->out1);
+                out_ptrs->s = State_new('c', NULL, NULL);
+                printf("op: %c\n", s->out1->c);
 	            f = Frag_new(s, out_ptrs);
-                push(f);
+            	push(f);
 	            break;
             case '|':
             	e2 = pop();
@@ -90,16 +93,16 @@ State *post2nfa(char *postfix)
 
 int main(int argc, char **argv)
 {
-    State *start = post2nfa("ab|");
+    State *start = post2nfa("a");
     UNUSED(start);
 
     /* 
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-    if (match(start, "a")) {
+    /*if (match(start, "a")) {
         printf("%s matches\n", "a"); 
     } else
-        printf("Fail\n");
+        printf("Fail\n");*/
     return 0;
 }
