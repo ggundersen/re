@@ -87,10 +87,8 @@ State *post2nfa(char *postfix)
 	            out_ptrs = OutPtrs_new(&(s->out1));
 	            f = Frag_new(s, out_ptrs);
 
-                //printf("%c\n", t->c);
             	f.outPtrs->s = t;
-            	s = t;
-            	//printf("%p\n", &s);
+            	// THIS ABSOLUTELY MUST SAY t OR THE POINTERS ARE NOT BEING SHARED.
             	printf("%c\n", s->c);
             	push(f);
 	            break;
@@ -101,12 +99,10 @@ State *post2nfa(char *postfix)
             	s = State_new('~', e1.start, e2.start);
             	out_ptrs = concat(e1.outPtrs, e2.outPtrs);
             	f = Frag_new(s, out_ptrs);
-            	//printf("%p\n", &(f.outPtrs->s));
             	push(f);
             	break;
         }
 	}
-	//printf("-----");
 
 	e = pop();
 	patch(e.outPtrs, &match_state);

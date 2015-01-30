@@ -15,7 +15,6 @@ State *State_new(char c, State *out1, State *out2)
 	s->c = c;
 	s->out1 = out1;
 	s->out2 = out2;
-	//printf("s_new: %p\n", &s);
 	return s;
 }
 
@@ -72,11 +71,9 @@ OutPtrs *concat(OutPtrs *l1, OutPtrs *l2)
  */
 void patch(OutPtrs *slist, State *end)
 {
-    printf("%c\n", end->c);
     OutPtrs *next;
 	for (; slist; slist = next) {
 		next = slist->next;
-		printf("%p\n", &slist->s);
 		slist->s = end;
 	}
 }
