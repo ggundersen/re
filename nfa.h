@@ -38,7 +38,7 @@ struct OutPtrs
 };
 
 /* Helper functions for manipulating NFA states. */
-OutPtrs *OutPtrs_new(State *outp);
+OutPtrs *OutPtrs_new(State **outp);
 
 /* 
  * An NFA fragment contains a start state and 0 or more pointers to out

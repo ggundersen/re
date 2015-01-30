@@ -18,7 +18,10 @@
 // Verification
 // 1. stack[] and stackp point to the correct Frags at the correct times.
 // 2. State_new() constructor looks good.
-
+// 3. Verified construction of Frags and Outptrs
+// 4. Verified concat() and patch()
+//
+// Believe the bug is in simulation.
 
 
 /* 
@@ -47,8 +50,20 @@ void push(Frag f)
  */
 State *post2nfa(char *postfix)
 {
-	char *p;
+    /* 
+     * When we assign a pointer x to a pointer y, both share the same pointee
+     * or value. They do not share the same address. See:
+     * http://cslibrary.stanford.edu/106/
+     *
+     * This means that when we create a new State pointer via State_new() and
+     * assign it to *s, *s keeps its address but points to this new State
+     * pointer.
+     */
 	State *s;
+	char *p;
+	/* 
+	 * New Frags are created by value. This is why reusing *s works.
+	 */
     Frag f;
     OutPtrs *out_ptrs;
     Frag stack[1000], e1, e2, e;
@@ -64,12 +79,10 @@ State *post2nfa(char *postfix)
             default:
             	s = State_new(*p, NULL, NULL);
 	            /* 
-	             * Pass the address instead of the value so we can change the
-	             * value later.
+	             * s->out1 is a pointer; therefore &(s->out1) is a pointer to a
+	             * pointer.
 	             */
-	            out_ptrs = OutPtrs_new(s->out1);
-                out_ptrs->s = State_new('c', NULL, NULL);
-                printf("op: %c\n", s->out1->c);
+	            out_ptrs = OutPtrs_new(&(s->out1));
 	            f = Frag_new(s, out_ptrs);
             	push(f);
 	            break;
@@ -88,21 +101,23 @@ State *post2nfa(char *postfix)
 	e = pop();
 	patch(e.outPtrs, &match_state);
 
-	return e.start;
+    return e.start;
 }
 
 int main(int argc, char **argv)
 {
-    State *start = post2nfa("a");
+    State *start = post2nfa("ab|");
     UNUSED(start);
 
     /* 
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-    /*if (match(start, "a")) {
+    if (match(start, "a")) {
         printf("%s matches\n", "a"); 
-    } else
-        printf("Fail\n");*/
+    } else {
+        printf("Fail\n");
+    }
+
     return 0;
 }

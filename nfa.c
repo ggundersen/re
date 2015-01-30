@@ -15,6 +15,7 @@ State *State_new(char c, State *out1, State *out2)
 	s->c = c;
 	s->out1 = out1;
 	s->out2 = out2;
+	//printf("s_new: %p\n", &s);
 	return s;
 }
 
@@ -22,29 +23,27 @@ State *State_new(char c, State *out1, State *out2)
 State match_state = { '!' };
 
 /* Creates a new pointer list containing a single pointer outp. */
-OutPtrs *OutPtrs_new(State *outp)
+OutPtrs *OutPtrs_new(State **outpp)
 {
     OutPtrs *slist = malloc(sizeof *slist);
-    /* dereference outp once to get a pointer to a State. */
-    slist->s = outp;
+    /* 
+     * outpp is a pointer to a pointer to a State. Dereference it once to get a
+     * State.
+     */
+    slist->s = *outpp;
     slist->next = NULL;
     return slist;
 }
 
-/* 
- * We don't create a pointer to a Frag, like we do with State and OutPtrs,
- * because objects are all referentiable from within post2nfa().
- */
-Frag Frag_new(State *start, OutPtrs* outPtrs)
+Frag Frag_new(State *start, OutPtrs *outPtrs)
 {
     /* 
-     * Why doesn't this work for *State_new and *OutPtrs_new? Because we want
-     * to get a pointer back from those functions. malloc() allocates memory
-     * and returns and address for that memory.
-     *
-     * Why is it okay that this returns a copy of the newly instantiated Frag?
+     * We don't use a pointer to a Frag because we want Frags to be passed by
+     * value rather than by reference. This allows us to reuse the State
+     * pointers in the main switch statement: when a new Frag is created, new
+     * State structs are created.
      */
-	Frag n = { start, outPtrs };
+    Frag n = { start, outPtrs };
 	return n;
 }
 
@@ -53,8 +52,9 @@ OutPtrs *concat(OutPtrs *l1, OutPtrs *l2)
 {
     /* Save the start pointer and then traverse to the end of the linked list. */
     OutPtrs *start = l1;
-    while (l1->next)
+    while (l1->next) 
         l1 = l1->next;
+
     /* l1->next is NULL; it is safe to assign a new OutPtrs to it. */
     l1->next = l2;
     
@@ -73,7 +73,6 @@ OutPtrs *concat(OutPtrs *l1, OutPtrs *l2)
 void patch(OutPtrs *slist, State *end)
 {
     OutPtrs *next;
-
 	for (; slist; slist = next) {
 		next = slist->next;
 		slist->s = end;
