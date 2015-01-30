@@ -1,8 +1,29 @@
 #include "simul.h"
 
 
+/* Silences the unused variable warning. */
+#define UNUSED(x) (void)(x)
+
+
 /* This global keeps track of which NFA simulation we are on. */
 int g_list_id = 0;
+
+
+typedef struct StateList StateList;
+struct StateList
+{
+    /* 
+     * We don't have to use a linked list of States because we know exactly how
+     * big the list should be at construction. It is the number of NFA states
+     * created for the NFA multipled by the size of the State struct.
+     *
+     * We user a pointer instead of an array because we don't know how big the
+     * array will be until runtime.
+     */
+	State **states;
+	/* Tracks the number of states on the StateList struct. */
+	int length;
+};
 
 void add_state(StateList *l, State *s)
 {
@@ -17,6 +38,7 @@ void add_state(StateList *l, State *s)
 	if (s->list_id == g_list_id) {
 	    return;
 	}
+	printf("%c\n", s->c);
 
 	s->list_id = g_list_id;
 	/* TODO: ~ is my hack to denote split. Change this to a real enum. */
@@ -28,7 +50,7 @@ void add_state(StateList *l, State *s)
 	l->states[l->length++] = s;
 }
 
-void step(int c, StateList *clist, StateList *nlist)
+void step(char c, StateList *clist, StateList *nlist)
 {
 	int i;
 	State *s;
@@ -53,7 +75,6 @@ void step(int c, StateList *clist, StateList *nlist)
 StateList* init_list(State *s, StateList *l)
 {
 	g_list_id++;
-	l->length = 0;
 	add_state(l, s);
 	return l;
 }
@@ -84,19 +105,23 @@ int is_match(StateList *l)
 int match(State *start, char *s)
 {
 	StateList *clist, *nlist, *temp;
+	UNUSED(nlist);
+	UNUSED(clist);
+	UNUSED(temp);
     /* 
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
 	clist = init_list(start, StateList_new());
-	nlist = StateList_new();
+	/*nlist = StateList_new();
 
 	for (; *s; s++) {
 		step(*s, clist, nlist);
-		/* Swap. */
+		// Swap. 
 		temp = clist;
 		clist = nlist;
 		nlist = temp;
 	}
-	return is_match(nlist);
+	return is_match(nlist);*/
+	return 0;
 }

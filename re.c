@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     if (match(start, "a")) {
         printf("%s matches\n", "a"); 
     } else {
-        printf("Fail\n");
+        //printf("Fail\n");
     }
 
     return 0;
