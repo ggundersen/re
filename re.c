@@ -68,6 +68,8 @@ State *post2nfa(char *postfix)
     OutPtrs *out_ptrs;
     Frag stack[1000], e1, e2, e;
 
+    State *t = State_new('t', NULL, NULL);
+
     stackp = stack;
     for (p = postfix; *p != '\0'; p++) {
         /*
@@ -84,6 +86,12 @@ State *post2nfa(char *postfix)
 	             */
 	            out_ptrs = OutPtrs_new(&(s->out1));
 	            f = Frag_new(s, out_ptrs);
+
+                //printf("%c\n", t->c);
+            	f.outPtrs->s = t;
+            	s = t;
+            	//printf("%p\n", &s);
+            	printf("%c\n", s->c);
             	push(f);
 	            break;
             case '|':
@@ -93,10 +101,12 @@ State *post2nfa(char *postfix)
             	s = State_new('~', e1.start, e2.start);
             	out_ptrs = concat(e1.outPtrs, e2.outPtrs);
             	f = Frag_new(s, out_ptrs);
+            	//printf("%p\n", &(f.outPtrs->s));
             	push(f);
             	break;
         }
 	}
+	//printf("-----");
 
 	e = pop();
 	patch(e.outPtrs, &match_state);
@@ -113,11 +123,10 @@ int main(int argc, char **argv)
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-    if (match(start, "a")) {
+    /*if (match(start, "a")) {
         printf("%s matches\n", "a"); 
     } else {
-        //printf("Fail\n");
-    }
-
+        printf("Fail\n");
+    }*/
     return 0;
 }

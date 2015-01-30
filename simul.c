@@ -50,6 +50,15 @@ void add_state(StateList *l, State *s)
 	l->states[l->length++] = s;
 }
 
+/*
+ * step() takes a char and two lists of State structs. If a state on the
+ * current list 
+ *
+ *
+ * Advances the NFA simulation a single character. It uses the current
+        list of pointers to calculate the next. Notice that it passes
+        `next_list_ptr` into `__add_state()`.
+ * */
 void step(char c, StateList *clist, StateList *nlist)
 {
 	int i;
@@ -61,9 +70,13 @@ void step(char c, StateList *clist, StateList *nlist)
 
 	for (i = 0; i < clist->length; i++) {
 		s = clist->states[i];
-		if (s->c == c) {
-			add_state(nlist, s->out1);
-		}
+
+        /* 
+         * If the current state's transition is the same as the character being
+         * parsed.
+         */
+		if (s->c == c)
+		    add_state(nlist, s->out1);
 	}
 }
 
@@ -93,8 +106,10 @@ StateList *StateList_new()
 
 int is_match(StateList *l)
 {
+    printf("matchin with list length %d\n", l->length);
 	int i;
 	for (i = 0; i < l->length; i++) {
+	    printf("%c\n", l->states[i]->c);
 	    /* TODO: Use the enum with Match == 256. */
 	    if (l->states[i]->c == '-')
 	        return 1;
@@ -112,16 +127,17 @@ int match(State *start, char *s)
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
+	printf("init ---------\n");
 	clist = init_list(start, StateList_new());
-	/*nlist = StateList_new();
+	nlist = StateList_new();
 
 	for (; *s; s++) {
+	    printf("steppin ------\n");
 		step(*s, clist, nlist);
-		// Swap. 
 		temp = clist;
 		clist = nlist;
 		nlist = temp;
+		printf("%c\n", nlist->states[0]->c);
 	}
-	return is_match(nlist);*/
-	return 0;
+	return is_match(nlist);
 }

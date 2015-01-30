@@ -72,9 +72,11 @@ OutPtrs *concat(OutPtrs *l1, OutPtrs *l2)
  */
 void patch(OutPtrs *slist, State *end)
 {
+    printf("%c\n", end->c);
     OutPtrs *next;
 	for (; slist; slist = next) {
 		next = slist->next;
+		printf("%p\n", &slist->s);
 		slist->s = end;
 	}
 }
