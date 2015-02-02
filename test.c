@@ -11,7 +11,7 @@ struct State
 typedef struct List List;
 struct List
 {
-    State *s;
+    State **s;
 };
 
 State *State_new(char c, State *out)
@@ -26,22 +26,22 @@ State *State_new(char c, State *out)
 void *List_new(State **outpp)
 {
     List *slist = malloc(sizeof(*slist));
-    slist->s = *outpp;
+    slist->s = outpp;
     return slist;
 }
 
 int main()
 {
     State *a = State_new('a', NULL);
-    List *l  = List_new(&(a->out));
+    List *l = List_new(&(a->out));
 
     /* This printf() will result in a seg fault, since a->out is NULL. */
     //printf("%c\n", a->out->c);
 
     /* change what State struct is pointed to by l */
-    l->s = State_new('b', NULL);
+    *l->s = State_new('b', NULL);
 
     /* why is this not b? */
-    //printf("%c\n", a->out->c);
+    printf("%c\n", a->out->c);
     return 0;
 }

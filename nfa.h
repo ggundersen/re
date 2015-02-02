@@ -33,7 +33,7 @@ State match_state;
 typedef struct OutPtrs OutPtrs;
 struct OutPtrs
 {
-    State *s;
+    State **s;
     OutPtrs *next;
 };
 

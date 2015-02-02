@@ -38,7 +38,7 @@ void add_state(StateList *l, State *s)
 	if (s->list_id == g_list_id) {
 	    return;
 	}
-	printf("%c\n", s->c);
+	//printf("%c\n", s->c);
 
 	s->list_id = g_list_id;
 	/* TODO: ~ is my hack to denote split. Change this to a real enum. */
@@ -106,13 +106,16 @@ StateList *StateList_new()
 
 int is_match(StateList *l)
 {
-    printf("matchin with list length %d\n", l->length);
+   // printf("matchin with list length %d\n", l->length);
 	int i;
 	for (i = 0; i < l->length; i++) {
 	    printf("%c\n", l->states[i]->c);
+	    printf("%d\n", l->states[i]->c == '!');
 	    /* TODO: Use the enum with Match == 256. */
-	    if (l->states[i]->c == '-')
+	    if (l->states[i]->c == '!') {
+	        printf("!!!!!!!!!!!!! equal");
 	        return 1;
+	    }
 	}
 	return 0;
 }
@@ -127,17 +130,17 @@ int match(State *start, char *s)
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-	printf("init ---------\n");
+	//printf("init ---------\n");
 	clist = init_list(start, StateList_new());
 	nlist = StateList_new();
 
 	for (; *s; s++) {
-	    printf("steppin ------\n");
+	   // printf("steppin ------\n");
 		step(*s, clist, nlist);
 		temp = clist;
 		clist = nlist;
 		nlist = temp;
-		printf("%c\n", nlist->states[0]->c);
+		//printf("%c\n", nlist->states[0]->c);
 	}
 	return is_match(nlist);
 }

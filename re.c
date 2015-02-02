@@ -68,8 +68,6 @@ State *post2nfa(char *postfix)
     OutPtrs *out_ptrs;
     Frag stack[1000], e1, e2, e;
 
-    State *t = State_new('t', NULL, NULL);
-
     stackp = stack;
     for (p = postfix; *p != '\0'; p++) {
         /*
@@ -79,17 +77,13 @@ State *post2nfa(char *postfix)
          */
 		switch (*p) {
             default:
-            	s = State_new(*p, NULL, NULL);
+            	s = State_new(*p, g, NULL);
 	            /* 
 	             * s->out1 is a pointer; therefore &(s->out1) is a pointer to a
 	             * pointer.
 	             */
 	            out_ptrs = OutPtrs_new(&(s->out1));
 	            f = Frag_new(s, out_ptrs);
-
-            	f.outPtrs->s = t;
-            	// THIS ABSOLUTELY MUST SAY t OR THE POINTERS ARE NOT BEING SHARED.
-            	printf("%c\n", s->c);
             	push(f);
 	            break;
             case '|':
@@ -106,23 +100,23 @@ State *post2nfa(char *postfix)
 
 	e = pop();
 	patch(e.outPtrs, &match_state);
-
+    
     return e.start;
 }
 
 int main(int argc, char **argv)
 {
-    State *start = post2nfa("ab|");
+    State *start = post2nfa("a");
     UNUSED(start);
 
     /* 
      * Allocate enough memory for two lists to keep track of the current states
      * of the simulated NFA.
      */
-    /*if (match(start, "a")) {
+    if (match(start, "a")) {
         printf("%s matches\n", "a"); 
     } else {
         printf("Fail\n");
-    }*/
+    }
     return 0;
 }

@@ -13,6 +13,7 @@ State *State_new(char c, State *out1, State *out2)
 	s = malloc(sizeof(*s));
 	s->list_id = 0;
 	s->c = c;
+	/* These pointers now share a pointee. */
 	s->out1 = out1;
 	s->out2 = out2;
 	return s;
@@ -27,9 +28,9 @@ OutPtrs *OutPtrs_new(State **outpp)
     OutPtrs *slist = malloc(sizeof *slist);
     /* 
      * outpp is a pointer to a pointer to a State. Dereference it once to get a
-     * State.
+     * pointer to a State.
      */
-    slist->s = *outpp;
+    slist->s = outpp;
     slist->next = NULL;
     return slist;
 }
@@ -74,6 +75,6 @@ void patch(OutPtrs *slist, State *end)
     OutPtrs *next;
 	for (; slist; slist = next) {
 		next = slist->next;
-		slist->s = end;
+		*slist->s = end;
 	}
 }
