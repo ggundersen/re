@@ -77,7 +77,7 @@ State *post2nfa(char *postfix)
          */
 		switch (*p) {
             default:
-            	s = State_new(*p, g, NULL);
+            	s = State_new(*p, NULL, NULL);
 	            /* 
 	             * s->out1 is a pointer; therefore &(s->out1) is a pointer to a
 	             * pointer.
@@ -100,7 +100,6 @@ State *post2nfa(char *postfix)
 
 	e = pop();
 	patch(e.outPtrs, &match_state);
-    
     return e.start;
 }
 
@@ -115,8 +114,6 @@ int main(int argc, char **argv)
      */
     if (match(start, "a")) {
         printf("%s matches\n", "a"); 
-    } else {
-        printf("Fail\n");
     }
     return 0;
 }

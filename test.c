@@ -35,6 +35,10 @@ int main()
     State *a = State_new('a', NULL);
     List *l = List_new(&(a->out));
 
+    printf("%p\n", (a->out));
+    printf("%p\n", *(l->s));
+
+    printf("-----\n");
     /* This printf() will result in a seg fault, since a->out is NULL. */
     //printf("%c\n", a->out->c);
 
@@ -42,6 +46,7 @@ int main()
     *l->s = State_new('b', NULL);
 
     /* why is this not b? */
-    printf("%c\n", a->out->c);
+    printf("%p\n", (a->out));
+    //printf("%c\n", a->out->c);
     return 0;
 }

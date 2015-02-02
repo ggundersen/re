@@ -10,7 +10,7 @@
 State *State_new(char c, State *out1, State *out2)
 {
 	State *s;
-	s = malloc(sizeof(*s));
+	s = malloc(sizeof(State));
 	s->list_id = 0;
 	s->c = c;
 	/* These pointers now share a pointee. */
@@ -25,7 +25,7 @@ State match_state = { '!' };
 /* Creates a new pointer list containing a single pointer outp. */
 OutPtrs *OutPtrs_new(State **outpp)
 {
-    OutPtrs *slist = malloc(sizeof *slist);
+    OutPtrs *slist = malloc(sizeof(OutPtrs));
     /* 
      * outpp is a pointer to a pointer to a State. Dereference it once to get a
      * pointer to a State.
