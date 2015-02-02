@@ -7,6 +7,7 @@
 
 
 #include <stdio.h>
+#include "in2post.h"
 #include "nfa.h"
 #include "simul.h"
 
@@ -15,24 +16,17 @@
 #define UNUSED(x) (void)(x)
 
 
-/* 
- * C arrays are really a contiguous block of memory that the machine interprets
- * as all of the same type. pop() and push() handle moving the stack pointer so
- * we can dereference the correct NFA fragment.
- */
-Frag *stackp;
 
-Frag pop()
+static Frag pop(Frag **stackp)
 {
-    stackp--;
-    return *stackp;
+    (*stackp)--;
+    return **stackp;
 }
 
-/* f is passed by value. Is this a problem? */
-void push(Frag f)
+static void push(Frag **stackp, Frag f)
 {
-    *stackp = f;
-    stackp++;
+    **stackp = f;
+    (*stackp)++;
 }
 
 /* 
@@ -52,13 +46,19 @@ State *post2nfa(char *postfix)
      */
 	State *s;
 	char *p;
+
 	/* 
 	 * New Frags are created by value. This is why reusing *s works.
 	 */
     Frag f;
     OutPtrs *out_ptrs;
-    Frag stack[1000], e1, e2;
+    Frag stack[1000], *stackp, e1, e2;
 
+    /* 
+     * C arrays are really a contiguous block of memory that the machine
+     * interprets as all of the same type. pop() and push() handle moving the
+     * stack pointer so we can dereference the correct NFA fragment.
+     */
     stackp = stack;
     for (p = postfix; *p != '\0'; p++) {
         /*
@@ -76,52 +76,55 @@ State *post2nfa(char *postfix)
 	             */
 	            out_ptrs = OutPtrs_new(&(s->out1));
 	            f = Frag_new(s, out_ptrs);
-            	push(f);
+            	push(&stackp, f);
 	            break;
 
             /* Explicit concatenation. */
             case '.':
-                e2 = pop();
-                e1 = pop();
+                e2 = pop(&stackp);
+                e1 = pop(&stackp);
                 patch(e1.outPtrs, e2.start);
                 f = Frag_new(e1.start, e2.outPtrs);
-                push(f);
+                push(&stackp, f);
                 break;
 
             /* Alternation. */
             case '|':
-            	e2 = pop();
-            	e1 = pop();
+            	e2 = pop(&stackp);
+            	e1 = pop(&stackp);
             	/* TODO: Use the Split enum. */
             	s = State_new('~', e1.start, e2.start);
             	out_ptrs = concat(e1.outPtrs, e2.outPtrs);
             	f = Frag_new(s, out_ptrs);
-            	push(f);
+            	push(&stackp, f);
             	break;
 
             /* Kleene star: zero or more. */
 		    case '*':
-		        e1 = pop();
+		        e1 = pop(&stackp);
 			    s = State_new('~', e1.start, NULL);
 			    patch(e1.outPtrs, s);
 	            out_ptrs = OutPtrs_new(&(s->out2));
 	            f = Frag_new(s, out_ptrs);
-			    push(f);
+			    push(&stackp, f);
 			    break;
 			}
 	}
 
-	e1 = pop();
+	e1 = pop(&stackp);
 	patch(e1.outPtrs, &match_state);
     return e1.start;
 }
 
 int main(int argc, char **argv)
 {
-    char *input = "aaaaaaaaaaaa";
-    State *start = post2nfa("a*");
+    /*char *input = "a";
+    State *start = post2nfa("ab*|");
     if (match(start, input)) {
         printf("%s matches\n", input); 
-    }
+    }*/
+
+    char *postfix = in2post("a+b");
+    UNUSED(postfix);
     return 0;
 }
