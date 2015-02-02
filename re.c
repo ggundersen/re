@@ -104,7 +104,7 @@ State *post2nfa(char *postfix)
 		        e1 = pop();
 			    s = State_new('~', e1.start, NULL);
 			    patch(e1.outPtrs, s);
-	            out_ptrs = OutPtrs_new(&(s->out1));
+	            out_ptrs = OutPtrs_new(&(s->out2));
 	            f = Frag_new(s, out_ptrs);
 			    push(f);
 			    break;
@@ -113,19 +113,15 @@ State *post2nfa(char *postfix)
 
 	e1 = pop();
 	patch(e1.outPtrs, &match_state);
-	
-	printf("%c\n", e1.start->out1->c);
     return e1.start;
 }
 
 int main(int argc, char **argv)
 {
-    char *input = "aa";
+    char *input = "aaaaaaaaaaaa";
     State *start = post2nfa("a*");
-    UNUSED(input);
-    UNUSED(start);
-    //if (match(start, input)) {
-    //    printf("%s matches\n", input); 
-    //}
+    if (match(start, input)) {
+        printf("%s matches\n", input); 
+    }
     return 0;
 }

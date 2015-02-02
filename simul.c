@@ -44,7 +44,6 @@ void add_state(StateList *l, State *s)
 		add_state(l, s->out2);
 		return;
 	}
-	printf("%c\n", s->c);
 	l->states[l->length++] = s;
 }
 
@@ -68,7 +67,6 @@ void step(char c, StateList *clist, StateList *nlist)
          * If the current state's transition is the same as the character being
          * parsed.
          */
-        printf("%c\n", s->c);
 		if (s->c == c)
 		    add_state(nlist, s->out1);
 	}
@@ -100,10 +98,8 @@ StateList *StateList_new()
 
 int is_match(StateList *l)
 {
-    printf("ismatch\n");
 	int i;
 	for (i = 0; i < l->length; i++) {
-	    printf("%c\n", l->states[i]->c);
 	    /* TODO: Use the enum with Match == 256. */
 	    if (l->states[i]->c == '!') {
 	        return 1;
