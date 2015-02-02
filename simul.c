@@ -8,7 +8,6 @@
 /* This global keeps track of which NFA simulation we are on. */
 int g_list_id = 0;
 
-
 typedef struct StateList StateList;
 struct StateList
 {
@@ -32,28 +31,27 @@ void add_state(StateList *l, State *s)
      * pointer. The "s->list_id == g_list_id" guard checks that we haven't
      * already added the State to the list being built.
      */
-	if (s == NULL || s->list_id == g_list_id)
+	if (s == NULL)
 	    return;
+	if (s->list_id == g_list_id)
+        return;
 
 	s->list_id = g_list_id;
+
 	/* TODO: ~ is my hack to denote split. Change this to a real enum. */
 	if (s->c == '~') {
 		add_state(l, s->out1);
 		add_state(l, s->out2);
 		return;
 	}
+	printf("%c\n", s->c);
 	l->states[l->length++] = s;
 }
 
 /*
- * step() takes a char and two lists of State structs. If a state on the
- * current list 
- *
- *
- * Advances the NFA simulation a single character. It uses the current
-        list of pointers to calculate the next. Notice that it passes
-        `next_list_ptr` into `__add_state()`.
- * */
+ * step() avances the NFA simulation a single character. It uses the current
+ * list of pointers to calculate the next.
+ */
 void step(char c, StateList *clist, StateList *nlist)
 {
 	int i;
@@ -70,6 +68,7 @@ void step(char c, StateList *clist, StateList *nlist)
          * If the current state's transition is the same as the character being
          * parsed.
          */
+        printf("%c\n", s->c);
 		if (s->c == c)
 		    add_state(nlist, s->out1);
 	}
@@ -101,8 +100,10 @@ StateList *StateList_new()
 
 int is_match(StateList *l)
 {
+    printf("ismatch\n");
 	int i;
 	for (i = 0; i < l->length; i++) {
+	    printf("%c\n", l->states[i]->c);
 	    /* TODO: Use the enum with Match == 256. */
 	    if (l->states[i]->c == '!') {
 	        return 1;

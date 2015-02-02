@@ -15,15 +15,6 @@
 #define UNUSED(x) (void)(x)
 
 
-// Verification
-// 1. stack[] and stackp point to the correct Frags at the correct times.
-// 2. State_new() constructor looks good.
-// 3. Verified construction of Frags and Outptrs
-// 4. Verified concat() and patch()
-//
-// Believe the bug is in simulation.
-
-
 /* 
  * C arrays are really a contiguous block of memory that the machine interprets
  * as all of the same type. pop() and push() handle moving the stack pointer so
@@ -66,7 +57,7 @@ State *post2nfa(char *postfix)
 	 */
     Frag f;
     OutPtrs *out_ptrs;
-    Frag stack[1000], e1, e2, e;
+    Frag stack[1000], e1, e2;
 
     stackp = stack;
     for (p = postfix; *p != '\0'; p++) {
@@ -76,6 +67,7 @@ State *post2nfa(char *postfix)
          * char without seeing a metacharacter.
          */
 		switch (*p) {
+		    /* Character literal. */
             default:
             	s = State_new(*p, NULL, NULL);
 	            /* 
@@ -86,6 +78,17 @@ State *post2nfa(char *postfix)
 	            f = Frag_new(s, out_ptrs);
             	push(f);
 	            break;
+
+            /* Explicit concatenation. */
+            case '.':
+                e2 = pop();
+                e1 = pop();
+                patch(e1.outPtrs, e2.start);
+                f = Frag_new(e1.start, e2.outPtrs);
+                push(f);
+                break;
+
+            /* Alternation. */
             case '|':
             	e2 = pop();
             	e1 = pop();
@@ -95,25 +98,34 @@ State *post2nfa(char *postfix)
             	f = Frag_new(s, out_ptrs);
             	push(f);
             	break;
-        }
+
+            /* Kleene star: zero or more. */
+		    case '*':
+		        e1 = pop();
+			    s = State_new('~', e1.start, NULL);
+			    patch(e1.outPtrs, s);
+	            out_ptrs = OutPtrs_new(&(s->out1));
+	            f = Frag_new(s, out_ptrs);
+			    push(f);
+			    break;
+			}
 	}
 
-	e = pop();
-	patch(e.outPtrs, &match_state);
-    return e.start;
+	e1 = pop();
+	patch(e1.outPtrs, &match_state);
+	
+	printf("%c\n", e1.start->out1->c);
+    return e1.start;
 }
 
 int main(int argc, char **argv)
 {
-    State *start = post2nfa("a");
+    char *input = "aa";
+    State *start = post2nfa("a*");
+    UNUSED(input);
     UNUSED(start);
-
-    /* 
-     * Allocate enough memory for two lists to keep track of the current states
-     * of the simulated NFA.
-     */
-    if (match(start, "a")) {
-        printf("%s matches\n", "a"); 
-    }
+    //if (match(start, input)) {
+    //    printf("%s matches\n", input); 
+    //}
     return 0;
 }

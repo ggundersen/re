@@ -32,21 +32,24 @@ void *List_new(State **outpp)
 
 int main()
 {
-    State *a = State_new('a', NULL);
+    /*State *a = State_new('a', NULL);
     List *l = List_new(&(a->out));
 
     printf("%p\n", (a->out));
     printf("%p\n", *(l->s));
 
     printf("-----\n");
-    /* This printf() will result in a seg fault, since a->out is NULL. */
+    // This printf() will result in a seg fault, since a->out is NULL.
     //printf("%c\n", a->out->c);
 
-    /* change what State struct is pointed to by l */
+    // change what State struct is pointed to by l
     *l->s = State_new('b', NULL);
 
-    /* why is this not b? */
+    // why is this not b?
     printf("%p\n", (a->out));
-    //printf("%c\n", a->out->c);
+    //printf("%c\n", a->out->c);*/
+    int n;
+    n++;
+    printf("%d\n", n);
     return 0;
 }
