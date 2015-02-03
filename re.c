@@ -7,7 +7,7 @@
 
 
 #include <stdio.h>
-#include "in2post.h"
+#include "input.h"
 #include "nfa.h"
 #include "simul.h"
 
@@ -16,7 +16,11 @@
 #define UNUSED(x) (void)(x)
 
 
-
+/* 
+ * The static keyword restricts the scope of pop() and push() so we do not have
+ * symbol conflicts with the other pop and push functions. See:
+ * http://stackoverflow.com/a/572550/1830334.
+ */
 static Frag pop(Frag **stackp)
 {
     (*stackp)--;
@@ -118,13 +122,21 @@ State *post2nfa(char *postfix)
 
 int main(int argc, char **argv)
 {
-    /*char *input = "a";
-    State *start = post2nfa("ab*|");
-    if (match(start, input)) {
-        printf("%s matches\n", input); 
-    }*/
+    if (argc < 3) {
+        printf("Please provide both a regular expression and a test string as arguments.\n");
+        return 0;
+    }
 
-    char *postfix = in2post("a+b");
-    UNUSED(postfix);
+    char *re = argv[1];
+    char *t = argv[2];
+    
+    /* TODO: Implement in2post().
+    char *postfix = in2post(s);*/
+
+    State *start = post2nfa(re);
+    if (match(start, t)) {
+        printf("%s matches\n", t); 
+    }
+    
     return 0;
 }

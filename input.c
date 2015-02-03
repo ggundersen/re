@@ -1,15 +1,10 @@
-#include "in2post.h"
+#include "input.h"
 
 
 /* Silences the unused variable warning. */
 #define UNUSED(x) (void)(x)
 
 
-/* 
- * The static keyword restricts the scope of pop() and push() so we do not have
- * symbol conflicts with the other pop and push functions. See:
- * http://stackoverflow.com/a/572550/1830334.
- */
 static char pop(char **stackp)
 {
     (*stackp)--;

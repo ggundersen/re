@@ -1,5 +1,5 @@
-#ifndef IN2POST_H
-#define IN2POST_H
+#ifndef INPUT_H
+#define INPUT_H
 
 
 #include <stdio.h>
