@@ -16,6 +16,6 @@ Example expressions
 - `ab*|` matches either `a` or zero or many `b`s
 
 Usage
-- `./re [regular expression] [input]
+- `./re [regular expression] [input]`
 - To disambiguate the expression from the Unix pipe or `|`, use quotation marks when appropriate.
-- e.g. `./re 'ab|' a
+- e.g. `./re 'ab|' a`
